@@ -1,113 +1,333 @@
-import Image from 'next/image'
+"use client";
+import { Badge } from "@/components/ui/badge";
+import { useState, useRef } from "react";
+import Image from "next/image";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const [number, setNumber] = useState(1);
+  const router = useRouter();
+  const createOrder  = async () => {
+    const res = await fetch("/api/mercadopago", {
+      method: "POST",
+      body: JSON.stringify({
+        items: [
+          {
+            title: "Sorteo Navideño - 2023",
+            unit_price: 10000,
+            currency_id: "COP",
+            quantity: number,
+          },
+        ],
+          back_urls: {
+            success: "http://localhost:3000/success",
+            failure: "http://localhost:3000/failure",
+            pending: "http://localhost:3000/pending",
+          },
+      }),
+    });
+    const data = await res.json();
+    router.push(data.body.init_point);
+  };
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="w-full max-w-md flex flex-col gap-4 mx-auto px-11 py-6">
+      <div className="hidden absolute top-0 left-0 h-full w-full bg-[#00000050] z-10 items-center justify-center">
+        <div className="bg-white rounded p-4  w-fit">
+          <div className="flex items-center justify-center gap-2 flex-col h-full">
+            <p className="text-2xl font-bold">El ganador es el numero:</p>
+            <p className="text-4xl font-bold">0025</p>
+          </div>
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <Logo />
+      <ProductImage />
+      <h1 className="text-2xl font-bold">Sorteo Navideño - 2023</h1>
+      <div className="flex items-center gap-2 justify-between">
+        <div>
+        <span className="text-sm">
+          Estado: {" "}
+        </span><Badge className="bg-blue-500">Activo</Badge></div>
+        <p className="text-sm text-gray-500">Fecha de sorteo: 25/12/2023</p>
       </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <div className="flex items-center gap-2 justify-between">
+        <p className="text-sm">Tickets disponibles: 100</p>
+        <p className="text-sm text-gray-500">Precio x ticket: $10000</p>
       </div>
-    </main>
-  )
+      <div className="flex items-center gap-2 justify-between">
+        <Button className="text-sm" onClick={() => {
+          if (number > 1) {
+            setNumber(number - 1);
+          }
+        }}>
+          menos
+        </Button>
+        <p className="text-sm">{number}</p>
+        <Button className="text-sm"
+          onClick={() => {
+            if (number < 50) {
+              setNumber(number + 1);
+            }
+          }}
+        >mas</Button>
+      </div>
+      <Button onClick={() => createOrder()} className="text-sm">Comprar</Button>
+    </div>
+  );
 }
+
+const Logo = () => (
+  <>
+    <svg
+      width="186"
+      height="25"
+      viewBox="0 0 186 25"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="mx-auto mb-2 dark:text-white"
+    >
+      <g clipPath="url(#clip0_62_2)">
+        <path
+          d="M97.0101 8.32475L92.9172 8.37364C92.9083 8.37364 92.8998 8.37014 92.8935 8.36391C92.8873 8.35768 92.8837 8.34924 92.8837 8.34043V6.38379C92.8838 6.37789 92.8855 6.37214 92.8887 6.36711C92.8918 6.36209 92.8962 6.35797 92.9014 6.35519L102.765 0.928989C102.77 0.926303 102.776 0.924949 102.781 0.925055C102.787 0.92516 102.793 0.926723 102.798 0.929592C102.803 0.932462 102.807 0.936543 102.81 0.941444C102.813 0.946346 102.814 0.951904 102.814 0.957586V24.0434C102.814 24.0491 102.813 24.0548 102.81 24.0598C102.807 24.0649 102.803 24.0691 102.798 24.0721C102.793 24.075 102.787 24.0767 102.782 24.0768C102.776 24.077 102.77 24.0756 102.765 24.0729L97.0604 20.9511C97.0551 20.9483 97.0507 20.9442 97.0476 20.9392C97.0445 20.9342 97.0428 20.9284 97.0427 20.9225L97.0436 8.35796C97.0436 8.35359 97.0428 8.34928 97.0411 8.34525C97.0394 8.34122 97.0369 8.33756 97.0338 8.33447C97.0307 8.33139 97.027 8.32894 97.023 8.32727C97.0189 8.3256 97.0145 8.32475 97.0101 8.32475Z"
+          fill="currentColor"
+        />
+        <path
+          d="M128.584 19.2343H135.494C135.502 19.2343 135.511 19.2378 135.517 19.244C135.524 19.2502 135.527 19.2587 135.527 19.2675V24.0443C135.527 24.0486 135.526 24.0529 135.524 24.057C135.523 24.061 135.52 24.0647 135.517 24.0677C135.514 24.0708 135.51 24.0733 135.506 24.0749C135.502 24.0766 135.498 24.0775 135.494 24.0775H128.153C128.147 24.0774 128.141 24.0758 128.136 24.0729L122.75 20.952C122.745 20.9491 122.74 20.9449 122.738 20.9399C122.735 20.9349 122.733 20.9292 122.733 20.9234L122.734 7.09776C122.734 7.09196 122.736 7.08626 122.738 7.08125C122.741 7.07623 122.746 7.07206 122.751 7.06916L128.174 3.88005C128.179 3.87707 128.184 3.87548 128.19 3.87543L135.494 3.87451C135.502 3.87451 135.511 3.87801 135.517 3.88424C135.524 3.89047 135.527 3.89891 135.527 3.90772V8.15403C135.527 8.16284 135.524 8.17129 135.517 8.17752C135.511 8.18374 135.502 8.18724 135.494 8.18724H128.585C128.58 8.18724 128.576 8.1881 128.572 8.18977C128.568 8.19144 128.564 8.19389 128.561 8.19697C128.558 8.20005 128.555 8.20371 128.554 8.20774C128.552 8.21177 128.551 8.21609 128.551 8.22045L128.55 11.9133C128.55 11.9221 128.554 11.9305 128.56 11.9367C128.566 11.943 128.575 11.9465 128.584 11.9465H135.494C135.502 11.9465 135.511 11.95 135.517 11.9562C135.524 11.9624 135.527 11.9709 135.527 11.9797V15.4419C135.527 15.4507 135.524 15.4591 135.517 15.4653C135.511 15.4716 135.502 15.4751 135.494 15.4751H128.585C128.58 15.4751 128.576 15.4759 128.572 15.4776C128.568 15.4793 128.564 15.4817 128.561 15.4848C128.558 15.4879 128.555 15.4915 128.554 15.4956C128.552 15.4996 128.551 15.5039 128.551 15.5083L128.55 19.2011C128.55 19.2099 128.554 19.2183 128.56 19.2246C128.566 19.2308 128.575 19.2343 128.584 19.2343Z"
+          fill="currentColor"
+        />
+        <path
+          d="M144.773 11.8791V8.24261C144.773 8.20571 144.755 8.18726 144.717 8.18726H137.846C137.813 8.18726 137.796 8.17066 137.796 8.13745V3.90497C137.796 3.89714 137.799 3.88964 137.805 3.8841C137.811 3.87856 137.818 3.87545 137.826 3.87545C140.289 3.87361 142.691 3.87392 145.032 3.87638C145.14 3.87638 145.245 3.90682 145.349 3.9677C147.089 4.99292 148.838 6.02152 150.596 7.0535C150.609 7.06112 150.619 7.07192 150.626 7.08485C150.634 7.09778 150.638 7.1124 150.638 7.1273V12.2887C150.638 12.2972 150.635 12.3054 150.631 12.3127C150.627 12.32 150.621 12.326 150.614 12.3303L145.22 15.4566C145.197 15.4689 145.174 15.4751 145.149 15.4751H137.858C137.817 15.4751 137.796 15.4548 137.796 15.4142V11.9954C137.796 11.9628 137.813 11.9465 137.846 11.9465H144.706C144.751 11.9465 144.773 11.924 144.773 11.8791Z"
+          fill="currentColor"
+        />
+        <path
+          d="M48.4437 19.1826L48.4428 24.0138C48.4428 24.0246 48.4384 24.0349 48.4308 24.0425C48.4231 24.0501 48.4127 24.0544 48.4018 24.0544H41.1534C41.1462 24.0544 41.1392 24.0525 41.133 24.0489L35.7557 20.9068C35.7495 20.9033 35.7443 20.8982 35.7407 20.892C35.7371 20.8858 35.7352 20.8789 35.7352 20.8718V7.10331C35.7352 7.0962 35.7371 7.08922 35.7407 7.08307C35.7443 7.07692 35.7495 7.07181 35.7557 7.06826L41.132 3.92619C41.1382 3.92259 41.1453 3.92068 41.1525 3.92065H48.4028C48.4136 3.92065 48.424 3.92493 48.4317 3.93254C48.4394 3.94016 48.4437 3.95048 48.4437 3.96124L48.4428 8.19279C48.4428 8.20356 48.4384 8.21388 48.4308 8.2215C48.4231 8.22911 48.4127 8.23338 48.4018 8.23338H41.5505C41.5397 8.23338 41.5293 8.23766 41.5216 8.24527C41.5139 8.25289 41.5096 8.26321 41.5096 8.27398L41.5115 19.1015C41.5115 19.1122 41.5158 19.1226 41.5234 19.1302C41.5311 19.1378 41.5415 19.1421 41.5524 19.1421H48.4028C48.4136 19.1421 48.424 19.1463 48.4317 19.1539C48.4394 19.1616 48.4437 19.1719 48.4437 19.1826Z"
+          fill="currentColor"
+        />
+        <path
+          d="M57.0806 19.1135V8.26198C57.0806 8.2544 57.0776 8.24712 57.0722 8.24176C57.0668 8.2364 57.0594 8.23338 57.0518 8.23338H50.1335C50.1297 8.23338 50.126 8.23264 50.1225 8.23121C50.119 8.22977 50.1158 8.22766 50.1131 8.22501C50.1104 8.22235 50.1083 8.2192 50.1069 8.21573C50.1054 8.21226 50.1047 8.20854 50.1047 8.20479V3.94925C50.1047 3.9455 50.1054 3.94178 50.1069 3.93831C50.1083 3.93484 50.1104 3.93169 50.1131 3.92903C50.1158 3.92637 50.119 3.92427 50.1225 3.92283C50.126 3.92139 50.1297 3.92065 50.1335 3.92065H57.4452C57.4501 3.92069 57.4549 3.92196 57.4591 3.92434L62.8457 7.07287C62.85 7.07545 62.8536 7.07911 62.856 7.08348C62.8584 7.08785 62.8597 7.09278 62.8596 7.09778L62.8587 20.8773C62.8588 20.8823 62.8575 20.8872 62.8551 20.8916C62.8526 20.896 62.8491 20.8996 62.8447 20.9022L57.4563 24.0507C57.4521 24.0531 57.4473 24.0544 57.4424 24.0544H50.1335C50.1297 24.0544 50.126 24.0537 50.1225 24.0522C50.119 24.0508 50.1158 24.0487 50.1131 24.046C50.1104 24.0434 50.1083 24.0402 50.1069 24.0368C50.1054 24.0333 50.1047 24.0296 50.1047 24.0258V19.1707C50.1047 19.1669 50.1054 19.1632 50.1069 19.1597C50.1083 19.1562 50.1104 19.1531 50.1131 19.1504C50.1158 19.1478 50.119 19.1457 50.1225 19.1442C50.126 19.1428 50.1297 19.1421 50.1335 19.1421H57.0518C57.0594 19.1421 57.0668 19.139 57.0722 19.1337C57.0776 19.1283 57.0806 19.121 57.0806 19.1135Z"
+          fill="currentColor"
+        />
+        <path
+          d="M170.74 19.178L170.739 24.0184C170.739 24.028 170.735 24.0371 170.728 24.0439C170.721 24.0506 170.712 24.0544 170.702 24.0544H163.448C163.441 24.0546 163.435 24.053 163.429 24.0498L158.048 20.9041C158.043 20.9009 158.038 20.8964 158.035 20.8911C158.032 20.8858 158.03 20.8798 158.03 20.8736L158.031 7.09963C158.031 7.09348 158.033 7.08745 158.036 7.08212C158.039 7.07679 158.044 7.07234 158.049 7.06919L163.429 3.92528C163.435 3.92211 163.441 3.92052 163.448 3.92066H170.703C170.713 3.92066 170.722 3.92445 170.729 3.9312C170.736 3.93795 170.74 3.9471 170.74 3.95664V8.19742C170.74 8.20696 170.736 8.21611 170.729 8.22286C170.722 8.2296 170.713 8.23339 170.703 8.23339H163.843C163.833 8.23339 163.824 8.23718 163.817 8.24393C163.81 8.25068 163.807 8.25983 163.807 8.26937V19.1061C163.807 19.1156 163.81 19.1248 163.817 19.1315C163.824 19.1383 163.833 19.1421 163.843 19.1421H170.703C170.713 19.1421 170.722 19.1459 170.729 19.1526C170.736 19.1593 170.74 19.1685 170.74 19.178Z"
+          fill="currentColor"
+        />
+        <path
+          d="M6.62622 8.39486V11.9696C6.62622 11.9757 6.62867 11.9816 6.63303 11.9859C6.63739 11.9902 6.64331 11.9926 6.64947 11.9926H13.5315C13.5379 11.9926 13.544 11.9951 13.5486 11.9994C13.5531 12.0037 13.5557 12.0096 13.5557 12.0157V15.5443C13.5557 15.5504 13.5531 15.5563 13.5486 15.5606C13.544 15.5649 13.5379 15.5674 13.5315 15.5674H6.1389C6.09506 15.5674 6.052 15.5556 6.01428 15.5332L0.867662 12.4456C0.857122 12.4391 0.848425 12.4302 0.842401 12.4195C0.836377 12.4088 0.833227 12.3969 0.833252 12.3847V7.25833C0.833265 7.24089 0.837807 7.22375 0.846441 7.20856C0.855074 7.19338 0.867508 7.18065 0.882542 7.17161C2.51128 6.19498 4.18032 5.19345 5.88966 4.167C6.00746 4.09628 6.13518 4.06091 6.27282 4.06091C8.67408 4.05907 11.0927 4.05845 13.5287 4.05907C13.5358 4.05907 13.5427 4.06179 13.5478 4.06663C13.5528 4.07148 13.5557 4.07805 13.5557 4.0849V8.30169C13.5557 8.30805 13.5531 8.31415 13.5486 8.31865C13.544 8.32315 13.5379 8.32567 13.5315 8.32567H6.69597C6.64947 8.32567 6.62622 8.34874 6.62622 8.39486Z"
+          fill="currentColor"
+        />
+        <path
+          d="M22.5032 8.32567H15.677C15.6504 8.32567 15.637 8.31245 15.637 8.28601L15.6389 4.12364C15.6389 4.10652 15.6456 4.09009 15.6577 4.07798C15.6697 4.06587 15.686 4.05907 15.7031 4.05907C19.389 4.05845 21.8029 4.05907 22.945 4.06091C23.0361 4.06091 23.1229 4.08551 23.2054 4.13471C24.9314 5.17407 26.6296 6.19376 28.2999 7.19376C28.3278 7.21036 28.3418 7.23465 28.3418 7.26663V10.2629C28.3418 10.2937 28.3263 10.3091 28.2953 10.3091H22.6185C22.5857 10.3091 22.5692 10.2928 22.5692 10.2602L22.5702 8.39209C22.5702 8.34781 22.5479 8.32567 22.5032 8.32567Z"
+          fill="currentColor"
+        />
+        <path
+          d="M76.9957 6.02956L83.8405 4.07015C83.8455 4.06871 83.8508 4.06846 83.8559 4.06941C83.861 4.07036 83.8659 4.07249 83.87 4.07562C83.8742 4.07876 83.8775 4.08282 83.8798 4.08748C83.8821 4.09213 83.8833 4.09726 83.8832 4.10244V8.29248C83.8832 8.30128 83.8797 8.30973 83.8734 8.31596C83.8672 8.32219 83.8586 8.32569 83.8498 8.32569H76.9864C76.9775 8.32569 76.969 8.32919 76.9627 8.33541C76.9564 8.34164 76.9529 8.35009 76.9529 8.3589V24.0443C76.9529 24.0487 76.952 24.053 76.9503 24.057C76.9486 24.0611 76.9462 24.0647 76.9431 24.0678C76.94 24.0709 76.9363 24.0733 76.9322 24.075C76.9282 24.0767 76.9238 24.0775 76.9194 24.0775H71.2064C71.202 24.0775 71.1977 24.0767 71.1936 24.075C71.1895 24.0733 71.1858 24.0709 71.1827 24.0678C71.1796 24.0647 71.1772 24.0611 71.1755 24.057C71.1738 24.053 71.1729 24.0487 71.1729 24.0443L71.172 4.09229C71.172 4.08348 71.1755 4.07504 71.1818 4.06881C71.1881 4.06258 71.1966 4.05908 71.2055 4.05908H76.9194C76.9283 4.05908 76.9368 4.06258 76.9431 4.06881C76.9494 4.07504 76.9529 4.08348 76.9529 4.09229V5.99727C76.9528 6.00246 76.954 6.00758 76.9563 6.01224C76.9586 6.01689 76.9619 6.02095 76.9661 6.02409C76.9702 6.02723 76.9751 6.02936 76.9802 6.03031C76.9854 6.03126 76.9906 6.031 76.9957 6.02956Z"
+          fill="currentColor"
+        />
+        <path
+          d="M111.788 4.05908H104.938C104.915 4.05908 104.898 4.07684 104.898 4.09875V8.2851C104.898 8.307 104.915 8.32476 104.938 8.32476H111.788C111.81 8.32476 111.828 8.307 111.828 8.2851V4.09875C111.828 4.07684 111.81 4.05908 111.788 4.05908Z"
+          fill="currentColor"
+        />
+        <path
+          d="M86.0092 4.07943L91.9463 6.58773C91.9529 6.59046 91.9586 6.59507 91.9626 6.60098C91.9665 6.60689 91.9686 6.61384 91.9686 6.62094L91.9696 10.2732C91.9696 10.2827 91.9658 10.2918 91.959 10.2986C91.9522 10.3053 91.9429 10.3091 91.9333 10.3091H85.9953C85.9856 10.3091 85.9764 10.3053 85.9696 10.2986C85.9628 10.2918 85.959 10.2827 85.959 10.2732V4.11264C85.959 4.10672 85.9605 4.10088 85.9633 4.09566C85.9661 4.09044 85.9702 4.08599 85.9751 4.0827C85.9801 4.07942 85.9858 4.0774 85.9918 4.07683C85.9977 4.07626 86.0037 4.07715 86.0092 4.07943Z"
+          fill="currentColor"
+        />
+        <path
+          d="M179.377 19.1126V8.26294C179.377 8.25511 179.373 8.2476 179.368 8.24206C179.362 8.23653 179.355 8.23342 179.347 8.23342H172.43C172.422 8.23342 172.415 8.23031 172.409 8.22477C172.404 8.21923 172.401 8.21172 172.401 8.2039V3.9502C172.401 3.94238 172.404 3.93487 172.409 3.92933C172.415 3.92379 172.422 3.92068 172.43 3.92068H179.739C179.745 3.92044 179.75 3.92171 179.755 3.92437L185.129 7.06644C185.134 7.06898 185.138 7.0726 185.14 7.07696C185.143 7.08132 185.144 7.08628 185.144 7.09135V20.8838C185.144 20.8889 185.143 20.8938 185.14 20.8982C185.138 20.9025 185.134 20.9062 185.129 20.9087L179.755 24.0508C179.75 24.0534 179.745 24.0547 179.739 24.0545H172.43C172.422 24.0545 172.415 24.0513 172.409 24.0458C172.404 24.0403 172.401 24.0328 172.401 24.0249L172.4 19.1716C172.4 19.1638 172.403 19.1563 172.408 19.1507C172.414 19.1452 172.422 19.1421 172.429 19.1421H179.347C179.355 19.1421 179.362 19.139 179.368 19.1334C179.373 19.1279 179.377 19.1204 179.377 19.1126Z"
+          fill="currentColor"
+        />
+        <path
+          d="M22.718 15.5674H15.8109C15.8013 15.5674 15.7921 15.5636 15.7853 15.5569C15.7785 15.5501 15.7747 15.541 15.7747 15.5314L15.7756 12.0287C15.7756 12.0239 15.7765 12.0193 15.7784 12.0149C15.7802 12.0105 15.7828 12.0066 15.7862 12.0032C15.7896 11.9999 15.7936 11.9972 15.798 11.9954C15.8024 11.9936 15.8071 11.9927 15.8119 11.9927L23.0668 11.9936C23.0734 11.9937 23.0798 11.9956 23.0854 11.9991L28.3241 15.1882C28.3294 15.1914 28.3338 15.1959 28.3369 15.2012C28.34 15.2065 28.3417 15.2125 28.3418 15.2187V20.9207C28.3417 20.9269 28.34 20.9329 28.3369 20.9382C28.3338 20.9436 28.3294 20.948 28.3241 20.9512L23.1217 24.072C23.1161 24.0755 23.1097 24.0774 23.1031 24.0775H15.6733C15.6637 24.0775 15.6544 24.0738 15.6476 24.067C15.6408 24.0603 15.637 24.0511 15.637 24.0416L15.6389 19.3165C15.6389 19.3069 15.6427 19.2978 15.6495 19.291C15.6563 19.2843 15.6655 19.2805 15.6752 19.2805H22.718C22.7277 19.2805 22.7369 19.2767 22.7437 19.27C22.7505 19.2632 22.7543 19.2541 22.7543 19.2445V15.6034C22.7543 15.5938 22.7505 15.5847 22.7437 15.5779C22.7369 15.5712 22.7277 15.5674 22.718 15.5674Z"
+          fill="currentColor"
+        />
+        <path
+          d="M111.829 19.3404V17.3524C111.829 17.3438 111.832 17.3356 111.838 17.3295C111.844 17.3235 111.853 17.3201 111.861 17.3201H117.612C117.621 17.3201 117.629 17.3235 117.635 17.3295C117.642 17.3356 117.645 17.3438 117.645 17.3524V21.0166C117.645 21.0221 117.644 21.0276 117.641 21.0325C117.638 21.0373 117.634 21.0414 117.629 21.0442L112.426 24.1651C112.421 24.1681 112.415 24.1697 112.409 24.1697H104.93C104.921 24.1697 104.913 24.1663 104.907 24.1602C104.901 24.1542 104.898 24.146 104.898 24.1374V19.4049C104.898 19.3964 104.901 19.3882 104.907 19.3821C104.913 19.3761 104.921 19.3727 104.93 19.3727H111.796C111.801 19.3727 111.805 19.3718 111.809 19.3702C111.813 19.3686 111.816 19.3662 111.819 19.3632C111.822 19.3602 111.825 19.3566 111.826 19.3527C111.828 19.3488 111.829 19.3446 111.829 19.3404Z"
+          fill="currentColor"
+        />
+        <path
+          d="M6.66621 19.465H13.5157C13.5263 19.465 13.5364 19.4692 13.5439 19.4766C13.5514 19.4841 13.5557 19.4941 13.5557 19.5047L13.5547 24.2224C13.5547 24.2329 13.5505 24.243 13.543 24.2504C13.5355 24.2579 13.5253 24.262 13.5147 24.262H6.0459C6.0387 24.2621 6.03164 24.2601 6.02544 24.2565L0.852782 21.155C0.846822 21.1515 0.841887 21.1465 0.838463 21.1405C0.835039 21.1345 0.833243 21.1278 0.833252 21.1209V17.9364C0.833252 17.9312 0.834286 17.926 0.836296 17.9212C0.838306 17.9164 0.841251 17.912 0.844965 17.9083C0.848678 17.9047 0.853087 17.9017 0.857938 17.8997C0.86279 17.8978 0.86799 17.8967 0.873242 17.8967H6.58716C6.59241 17.8967 6.59761 17.8978 6.60247 17.8997C6.60732 17.9017 6.61173 17.9047 6.61544 17.9083C6.61915 17.912 6.6221 17.9164 6.62411 17.9212C6.62612 17.926 6.62715 17.9312 6.62715 17.9364L6.62622 19.4253C6.62622 19.4358 6.63044 19.4459 6.63794 19.4534C6.64543 19.4608 6.65561 19.465 6.66621 19.465Z"
+          fill="currentColor"
+        />
+        <path
+          d="M144.588 19.202V17.7444C144.588 17.7359 144.591 17.7277 144.598 17.7216C144.604 17.7156 144.612 17.7122 144.621 17.7122H150.605C150.614 17.7122 150.622 17.7156 150.628 17.7216C150.634 17.7277 150.638 17.7359 150.638 17.7444V20.9234C150.638 20.929 150.636 20.9345 150.633 20.9393C150.631 20.9442 150.627 20.9482 150.622 20.9511L145.233 24.0729C145.229 24.0757 145.223 24.0773 145.218 24.0775H137.829C137.825 24.0775 137.82 24.0766 137.816 24.075C137.812 24.0734 137.809 24.071 137.806 24.068C137.803 24.065 137.8 24.0615 137.799 24.0575C137.797 24.0536 137.796 24.0494 137.796 24.0452L137.797 19.2666C137.797 19.258 137.801 19.2498 137.807 19.2438C137.813 19.2377 137.821 19.2343 137.83 19.2343H144.555C144.564 19.2343 144.572 19.2309 144.579 19.2248C144.585 19.2188 144.588 19.2106 144.588 19.202Z"
+          fill="currentColor"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_62_2">
+          <rect width="186" height="25" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  </>
+);
+
+const generateNumberArray = (count: number) => {
+  const numbers = [];
+  for (let i = 1; i <= count; i++) {
+    const randomNumber = Math.random() < 0.5;
+    numbers.push({
+      number: `${i}`,
+      isChosen: randomNumber,
+    });
+  }
+  return numbers;
+};
+
+const generatedNumbers = generateNumberArray(100);
+function Hola() {
+  const generateNumberArray = (count: number) => {
+    const numbers = [];
+    for (let i = 1; i <= count; i++) {
+      const randomNumber = Math.random() < 0.5;
+      numbers.push({
+        number: `${i}`,
+        isChosen: randomNumber,
+      });
+    }
+    return numbers;
+  };
+
+  const generatedNumbers = generateNumberArray(100);
+
+  return (
+    <div className="w-full max-w-md flex flex-col ">
+      <h1 className="text-4xl font-bold pb-3">Aparte tu numero y gana</h1>
+      <div
+        className="h-[calc(100vh-400px)]
+      overflow-y-auto"
+      >
+        <div className="grid grid-cols-3 gap-4 px-4">
+          {generatedNumbers.map((number) => (
+            <div className="flex flex-col items-center">
+              <Badge
+                className="w-20 h-20 flex items-center justify-center"
+                variant={number.isChosen ? "default" : "secondary"}
+              >
+                {number.number}
+              </Badge>
+            </div>
+          ))}
+        </div>
+      </div>
+      <Button className="w-full my-3">Apartar x2</Button>
+    </div>
+  );
+}
+
+function ProductImage() {
+  const images = [
+    {
+      node: {
+        altText: "alt",
+        originalSrc:
+          "https://images.pexels.com/photos/1616566/pexels-photo-1616566.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      },
+    },
+    {
+      node: {
+        altText: "alt",
+        originalSrc:
+          "https://images.pexels.com/photos/6074064/pexels-photo-6074064.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      },
+    },
+    {
+      node: {
+        altText: "alt",
+        originalSrc:
+          "https://images.pexels.com/photos/13871096/pexels-photo-13871096.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      },
+    },
+    {
+      node: {
+        altText: "alt",
+        originalSrc:
+          "https://images.pexels.com/photos/15380961/pexels-photo-15380961/free-photo-of-magical-christmas-living-room.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      },
+    },
+  ];
+  const [mainImg, setMainImg] = useState(images[0].node);
+  const ref = useRef<HTMLDivElement>(null);
+  function scroll(scrollOffset: number) {
+    if (ref.current) ref.current.scrollLeft += scrollOffset;
+  }
+
+  return (
+    <>
+      <Producto src={mainImg.originalSrc} />
+      <div className="relative">
+        <button
+          className="h-full flex-shrink-0 absolute top-0 left-[-2rem] z-10 rounded-md "
+          onClick={() => scroll(-200)}
+        >
+          <ArrowLeft className="w-6" />
+        </button>
+        <button
+          className="h-full flex-shrink-0 absolute top-0 right-[-2rem] z-10 rounded-md"
+          onClick={() => scroll(200)}
+        >
+          <ArrowRight className="w-6" />
+        </button>
+        <div
+          className="w-full flex gap-4 overflow-hidden"
+          ref={ref}
+          style={{ scrollBehavior: "smooth" }}
+        >
+          {images.map((img: any, i: number) => (
+            <button
+              key={i}
+              className="flex-shrink-0 h-24 w-auto aspect-square rounded-md overflow-hidden"
+              onClick={() => setMainImg(img.node)}
+            >
+              <Image
+                src={img.node.originalSrc}
+                alt={img.node.altText}
+                width={200}
+                height={200}
+                className="object-cover h-full w-full transition-transform duration-500 ease-out transform hover:scale-105"
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+const Producto = ({ src }: { src: string }) => {
+  const [scale, setScale] = useState<number>(1);
+  const [transformOrigin, setTransformOrigin] = useState<string>("");
+
+  const handleMouseOver = () => {
+    setScale(1.6);
+  };
+
+  const handleMouseOut = () => {
+    setScale(1);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const x = ((e.pageX - target.offsetLeft) / target.offsetWidth) * 100;
+    const y = ((e.pageY - target.offsetTop) / target.offsetHeight) * 100;
+    setTransformOrigin(`${x}% ${y}%`);
+  };
+  return (
+    <div
+      className="relative overflow-hidden h-80 w-full rounded-md"
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
+      onMouseMove={handleMouseMove}
+    >
+      <div
+        className="block absolute top-0 left-0 w-full h-full bg-no-repeat bg-center bg-cover transition-transform duration-500 ease-out"
+        style={{
+          backgroundImage: `url('${src}')`,
+          transform: `scale(${scale})`,
+          transformOrigin: transformOrigin,
+        }}
+      ></div>
+    </div>
+  );
+};
